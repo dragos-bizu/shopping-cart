@@ -16,12 +16,7 @@ class ProductImage(models.Model):
     image = models.ImageField(upload_to='products/images/')
 
 
-class Size(models.Model):
+class ProductSize(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
     size = models.CharField(max_length=5)
     available_items = models.IntegerField(default=0)
-
-
-class ProductAttribute(models.Model):
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    sizes = models.ManyToManyField(Size, related_name='product_sizes',
-                                   null=True)
