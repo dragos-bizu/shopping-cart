@@ -26,7 +26,7 @@ class CartAPIView(APIView):
             'user': request.user.id,
         }
         size = ProductSize.objects.get(id=request.data.get('product_size'))
-        if size.available_items < request.data.get('quantity'):
+        if int(size.available_items) < int(request.data.get('quantity')):
             return Response({'Response': 'Not enough items in stock!'},
                             status=status.HTTP_400_BAD_REQUEST)
         serializer = CartSerializer(data=data)
