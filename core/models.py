@@ -1,3 +1,4 @@
+from django.contrib.auth.models import User
 from django.db import models
 
 
@@ -31,3 +32,10 @@ class ProductSize(models.Model):
                                 related_name='sizes')
     size = models.CharField(max_length=5)
     available_items = models.IntegerField(default=0)
+
+
+class Cart(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True,
+                                blank=True)
+    quantity = models.IntegerField()
