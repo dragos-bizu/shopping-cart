@@ -1,4 +1,6 @@
 from rest_framework import viewsets, status
+from rest_framework.decorators import action
+from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -35,15 +37,16 @@ class CartAPIView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class CartDetailListView(viewsets.ModelViewSet):
-    queryset = Cart.objects.all().order_by("id")
-    serializer_class = CartDetailSerializer
+class CartDetailListAPIView(APIView, LimitOffsetPagination):
     permission_classes = (IsAuthenticated,)
 
-    def get_queryset(self):
-        cart_helper = CartHelper(self.request.user)
+    def get(self, request):
+        cart_products = Cart.objects.filter(user=request.user)
+        cart_helper = CartHelper(request.user)
         cart_total_price = cart_helper.calculate_cart_price()
 
-        return Response(status=status.HTTP_200_OK, data={
-            'products': self.queryset.filter(user=self.request.user),
-            'total_price': cart_total_price})
+        results = self.paginate_queryset(cart_products, request, view=self)
+        serializer = CartDetailSerializer(results, many=True)
+
+        return self.get_paginated_response(
+            {'products': serializer.data, 'total_price': cart_total_price})
