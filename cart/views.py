@@ -8,7 +8,7 @@ from rest_framework.views import APIView
 
 from cart.helpers import CartHelper
 from cart.serializers import CartSerializer, CartDetailSerializer
-from core.models import Cart, ProductSize, Order, OrderItems
+from core.models import Cart, ProductSize, Order, OrderItems, UserProfile
 
 
 class CartAPIView(APIView):
@@ -79,6 +79,11 @@ class CartCheckoutAPIView(APIView):
                                       product=cart_item.product,
                                       product_size=cart_item.product_size,
                                       quantity=cart_item.quantity)
+
+            user_profile = UserProfile.objects.get(user=request.user)
+            user_profile.wallet -= cart_item.product.price * cart_item.quantity
+            user_profile.save()
+
             product_size = ProductSize.objects.get(
                 id=cart_item.product_size_id)
             product_size.available_items -= cart_item.quantity
