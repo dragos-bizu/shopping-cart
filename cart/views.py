@@ -71,8 +71,10 @@ class CartCheckoutAPIView(APIView):
             if int(product_size.available_items) < int(cart_item.quantity):
                 return Response({'Response': 'Not enough items in stock'},
                                 status=status.HTTP_400_BAD_REQUEST)
-
-        order = Order.objects.create(user=request.user)
+        cart_helper = CartHelper(request.user)
+        order = Order.objects.create(user=request.user,
+                                     total_price=
+                                     cart_helper.calculate_cart_price())
 
         for cart_item in cart_items:
             OrderItems.objects.create(order=order,
