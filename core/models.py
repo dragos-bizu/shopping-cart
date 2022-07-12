@@ -41,3 +41,25 @@ class Cart(models.Model):
     product_size = models.ForeignKey(ProductSize, on_delete=models.SET_NULL,
                                      null=True)
     quantity = models.IntegerField()
+
+
+class Order(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def get_items(self):
+        return [order_item for order_item in self.order_items.all()]
+
+
+class OrderItemStatus:
+    ordered = 'Ordered'
+    returned = 'Returned'
+
+
+class OrderItems(models.Model):
+    order = models.ForeignKey(Order, on_delete=models.CASCADE,
+                              related_name='order_items')
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    product_size = models.ForeignKey(ProductSize, on_delete=models.CASCADE)
+    quantity = models.IntegerField()
+    status = models.CharField(max_length=255, default=OrderItemStatus.ordered)

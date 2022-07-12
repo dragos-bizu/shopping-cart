@@ -8,7 +8,7 @@ from rest_framework.views import APIView
 
 from cart.helpers import CartHelper
 from cart.serializers import CartSerializer, CartDetailSerializer
-from core.models import Cart, ProductSize
+from core.models import Cart, ProductSize, Order, OrderItems
 
 
 class CartAPIView(APIView):
@@ -16,8 +16,8 @@ class CartAPIView(APIView):
     permission_classes = (IsAuthenticated,)
 
     def get(self, request):
-        stations = Cart.objects.filter(user=request.user.id)
-        serializer = CartSerializer(stations, many=True)
+        cart = Cart.objects.filter(user=request.user.id)
+        serializer = CartSerializer(cart, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request):
@@ -53,3 +53,37 @@ class CartDetailListAPIView(APIView, LimitOffsetPagination):
 
         return self.get_paginated_response(
             {'products': serializer.data, 'total_price': cart_total_price})
+
+
+class CartCheckoutAPIView(APIView):
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request, format=None):
+        cart_items = Cart.objects.filter(user=request.user)
+        if not cart_items:
+            return Response({'Response': 'Cart is empy'},
+                            status=status.HTTP_400_BAD_REQUEST)
+
+        for cart_item in cart_items:
+            product_size = ProductSize.objects.get(
+                id=cart_item.product_size_id)
+            if int(product_size.available_items) < int(cart_item.quantity):
+                return Response({'Response': 'Not enough items in stock'},
+                                status=status.HTTP_400_BAD_REQUEST)
+
+        order = Order.objects.create(user=request.user)
+
+        for cart_item in cart_items:
+            OrderItems.objects.create(order=order,
+                                      product=cart_item.product,
+                                      product_size=cart_item.product_size,
+                                      quantity=cart_item.quantity)
+            product_size = ProductSize.objects.get(
+                id=cart_item.product_size_id)
+            product_size.available_items -= cart_item.quantity
+            product_size.save()
+
+            Cart.objects.all().delete()
+        return Response({'Response': 'Order succesfully placed!'},
+                        status=status.HTTP_200_OK)
