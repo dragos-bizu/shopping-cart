@@ -1,9 +1,15 @@
 from django.contrib.auth.models import User
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.settings import api_settings
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.response import Response
 from rest_framework import generics, status, authentication, permissions
-from .serializers import AuthTokenSerializer, RegisterSerializer
+from rest_framework.views import APIView
+
+from core.models import UserProfile
+from .serializers import AuthTokenSerializer, RegisterSerializer, \
+    UserProfileSerializer
 
 
 class RegisterView(generics.CreateAPIView):
@@ -14,6 +20,16 @@ class RegisterView(generics.CreateAPIView):
 class CreateTokenView(ObtainAuthToken):
     serializer_class = AuthTokenSerializer
     renderer_classes = api_settings.DEFAULT_RENDERER_CLASSES
+
+
+class UserProfileAPIView(APIView):
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request):
+        user_profile = UserProfile.objects.get(user=request.user)
+        serializer = UserProfileSerializer(user_profile)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class LogoutView(generics.GenericAPIView):

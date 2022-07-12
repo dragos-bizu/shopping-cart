@@ -63,3 +63,10 @@ class OrderItems(models.Model):
     product_size = models.ForeignKey(ProductSize, on_delete=models.CASCADE)
     quantity = models.IntegerField()
     status = models.CharField(max_length=255, default=OrderItemStatus.ordered)
+
+
+class UserProfile(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    wallet = models.DecimalField(max_digits=10, decimal_places=2)
+    name = models.CharField(max_length=255, null=True)
+    address = models.CharField(max_length=255, null=True)
