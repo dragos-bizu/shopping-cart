@@ -1,4 +1,4 @@
-from unittest import TestCase
+from django.test import TestCase
 
 from rest_framework import status
 from rest_framework.test import APIClient
@@ -7,7 +7,8 @@ from django.contrib.auth import get_user_model
 from django.urls import reverse
 
 from cart.helpers import CartHelper
-from cart.tests.utils import create_sample_product, create_sample_product_size, \
+from cart.tests.utils import create_sample_product, \
+    create_sample_product_size, \
     create_sample_cart
 from core.models import Cart
 
