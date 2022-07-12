@@ -71,7 +71,13 @@ class CartCheckoutAPIView(APIView):
             if int(product_size.available_items) < int(cart_item.quantity):
                 return Response({'Response': 'Not enough items in stock'},
                                 status=status.HTTP_400_BAD_REQUEST)
+        user_profile = UserProfile.objects.get(user=request.user)
         cart_helper = CartHelper(request.user)
+
+        if user_profile.wallet < cart_helper.calculate_cart_price():
+            return Response({'Response': 'Not enough money!'},
+                            status=status.HTTP_400_BAD_REQUEST)
+
         order = Order.objects.create(user=request.user,
                                      total_price=
                                      cart_helper.calculate_cart_price())
@@ -82,7 +88,6 @@ class CartCheckoutAPIView(APIView):
                                       product_size=cart_item.product_size,
                                       quantity=cart_item.quantity)
 
-            user_profile = UserProfile.objects.get(user=request.user)
             user_profile.wallet -= cart_item.product.price * cart_item.quantity
             user_profile.save()
 
