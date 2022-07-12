@@ -107,7 +107,7 @@ class CartApiTests(TestCase):
 
 
     def test_cart_checkout_not_enough_money(self):
-        """Test cart checkout update wallet"""
+        """Test cart checkout not enough money in wallet"""
         my_product_1 = create_sample_product('Jeans')
         my_product_size_1 = create_sample_product_size(my_product_1, 'XL', 1)
         my_product_2 = create_sample_product('Jacket')
