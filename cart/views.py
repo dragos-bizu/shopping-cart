@@ -1,4 +1,5 @@
 from rest_framework import viewsets, status
+from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import action
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.permissions import IsAuthenticated
@@ -11,6 +12,7 @@ from core.models import Cart, ProductSize
 
 
 class CartAPIView(APIView):
+    authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
 
     def get(self, request):
@@ -38,6 +40,7 @@ class CartAPIView(APIView):
 
 
 class CartDetailListAPIView(APIView, LimitOffsetPagination):
+    authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
 
     def get(self, request):
