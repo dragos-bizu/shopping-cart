@@ -5,5 +5,5 @@ from product.serializers import ProductFullSerializer
 
 
 class ProductListView(viewsets.ModelViewSet):
-    queryset = Product.objects.all()
+    queryset = Product.objects.all().order_by('id')
     serializer_class = ProductFullSerializer
