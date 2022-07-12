@@ -6,4 +6,4 @@ from product import factories
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
-        factories.ProductFactory.create_batch(size=10)
+        factories.ProductFactory.create_batch(size=10000)
