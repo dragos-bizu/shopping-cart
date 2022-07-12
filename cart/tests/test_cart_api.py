@@ -104,3 +104,22 @@ class CartApiTests(TestCase):
         my_user_profile = UserProfile.objects.get(user=self.user)
 
         self.assertEqual(my_user_profile.wallet, 1000-60)
+
+
+    def test_cart_checkout_not_enough_money(self):
+        """Test cart checkout update wallet"""
+        my_product_1 = create_sample_product('Jeans')
+        my_product_size_1 = create_sample_product_size(my_product_1, 'XL', 1)
+        my_product_2 = create_sample_product('Jacket')
+        my_product_size_2 = create_sample_product_size(my_product_2, 'M', 2)
+
+        create_sample_user_profile(self.user, wallet=10)
+
+        create_sample_cart(self.user, my_product_1,
+                           my_product_size_1, 1)
+        create_sample_cart(self.user, my_product_2,
+                           my_product_size_2, 2)
+
+        res = self.client.get(CART_CHECKOUT_URL)
+
+        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
