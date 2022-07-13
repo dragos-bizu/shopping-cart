@@ -1,6 +1,5 @@
-from rest_framework import viewsets, status
+from rest_framework import status
 from rest_framework.authentication import TokenAuthentication
-from rest_framework.decorators import action
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -80,7 +79,7 @@ class CartCheckoutAPIView(APIView):
 
         order = Order.objects.create(user=request.user,
                                      total_price=
-                                     cart_helper.calculate_cart_price())
+                                     cart_helper.cart_total_price)
 
         for cart_item in cart_items:
             OrderItems.objects.create(order=order,
@@ -97,5 +96,5 @@ class CartCheckoutAPIView(APIView):
             product_size.save()
 
             Cart.objects.all().delete()
-        return Response({'Response': 'Order succesfully placed!'},
+        return Response({'Response': 'Order successfully placed!'},
                         status=status.HTTP_200_OK)
