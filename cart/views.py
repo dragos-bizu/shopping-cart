@@ -1,3 +1,5 @@
+from drf_yasg import openapi
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.pagination import LimitOffsetPagination
@@ -9,6 +11,15 @@ from cart.helpers import CartHelper
 from cart.serializers import CartSerializer, CartDetailSerializer
 from core.models import Cart, ProductSize, Order, OrderItems, UserProfile
 
+product = openapi.Parameter('product_id', in_=openapi.IN_QUERY,
+                            type=openapi.TYPE_INTEGER)
+product_size = openapi.Parameter('product_size_id', in_=openapi.IN_QUERY,
+                                 type=openapi.TYPE_INTEGER)
+quantity = openapi.Parameter('quantity', in_=openapi.IN_QUERY,
+                             type=openapi.TYPE_INTEGER)
+user = openapi.Parameter('user_id', in_=openapi.IN_QUERY,
+                         type=openapi.TYPE_INTEGER)
+
 
 class CartAPIView(APIView):
     authentication_classes = (TokenAuthentication,)
@@ -19,6 +30,10 @@ class CartAPIView(APIView):
         serializer = CartSerializer(cart, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+    @swagger_auto_schema(operation_description='add item to cart',
+                         manual_parameters=[product, product_size, quantity,
+                                            user],
+                         responses={201: 'Item added to cart'})
     def post(self, request):
         data = {
             'product': request.data.get('product'),
