@@ -23,5 +23,6 @@ class ProductSizeSerializer(serializers.ModelSerializer):
 class ProductFullSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
-        fields = ['sku', 'price', 'name', 'description', 'delivery_time_days',
+        fields = ['id', 'sku', 'price', 'name', 'description',
+                  'delivery_time_days',
                   'active', 'get_sizes', 'get_images']
