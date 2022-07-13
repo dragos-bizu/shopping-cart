@@ -13,6 +13,7 @@ class Product(models.Model):
     def get_sizes(self):
         sizes = {}
         for size in self.sizes.all():
+            sizes[f'{size.size}_id'] = size.id
             sizes[size.size] = size.available_items
         return sizes
 
