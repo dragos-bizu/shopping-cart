@@ -1,4 +1,4 @@
-from rest_framework import viewsets, status
+from rest_framework import viewsets, status, filters
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import action
 from rest_framework.pagination import LimitOffsetPagination
@@ -37,6 +37,15 @@ class CartAPIView(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request):
+        cart = Cart.objects.get(id=request.data.get('cart_item_id'))
+        if not cart:
+            return Response({'Response': 'Item not found!'},
+                            status=status.HTTP_404_NOT_FOUND)
+        cart.delete()
+        return Response({'Response': 'Item has been deleted'},
+                        status=status.HTTP_200_OK)
 
 
 class CartDetailListAPIView(APIView, LimitOffsetPagination):
