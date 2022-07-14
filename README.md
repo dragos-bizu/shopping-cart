@@ -7,7 +7,7 @@ The client application that makes calls to this API is made in python and it is 
 ### Prerequisites
 To use the API and Client Application you need to install [Docker](https://docs.docker.com/desktop/windows/install/) and [Docker Compose](https://docs.docker.com/compose/install/)
 
-### Gettin Started
+### Getting Started
 * Before starting the server you have to create the docker image and run the tests to make sure everything is ok:
   ```sh
   docker-compose run app sh -c "python manage.py wait_for_db && python manage.py test"
