@@ -12,7 +12,7 @@ To use the API and Client Application you need to install [Docker](https://docs.
   ```sh
   docker-compose run app sh -c "python manage.py wait_for_db && python manage.py test"
   ```
-* After you need the start the DRF server:
+* After, you need to start the DRF server:
   ```sh
   docker-compose up app
   ```
