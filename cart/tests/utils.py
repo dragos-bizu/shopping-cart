@@ -1,4 +1,4 @@
-from core.models import Product, ProductSize, Cart
+from core.models import Product, ProductSize, Cart, UserProfile
 
 
 def get_product_defaults():
@@ -25,3 +25,15 @@ def create_sample_product_size(product, size, available_items):
 def create_sample_cart(user, product, product_size, quantity):
     return Cart.objects.create(user=user, product=product,
                                product_size=product_size, quantity=quantity)
+
+def get_user_profile_defaults():
+    return {
+        'wallet': '1000',
+        'name': 'Alex',
+        'address': 'Romania',
+    }
+
+def create_sample_user_profile(user, **params):
+    defaults = get_user_profile_defaults()
+    defaults.update(params)
+    return UserProfile.objects.create(user=user, **defaults)
