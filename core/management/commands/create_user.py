@@ -9,7 +9,7 @@ class Command(BaseCommand):
         if User.objects.filter(username='tim').exists():
             print('User already created')
         else:
-            user = User.objects.create(username='tim', password='tim12345')
+            user = User.objects.create_user(username='tim', password='tim12345')
             UserProfile.objects.create(user=user, wallet=1000, name='Tim',
                                        address='Romania')
             print('User has been created!')
