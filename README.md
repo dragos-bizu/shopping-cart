@@ -32,38 +32,38 @@ The commands: (They are not case sensitive):
   wallet
   ```
 * Shows products list paginated, you can navigate through pages.
-  '''sh
+  ```sh
   products
-  '''
+  ```
 * Search products by name.
-  '''sh
+  ```sh
   search products
-  '''
+  ```
 * Shows your products saved in cart.
-  '''sh
+  ```sh
   cart
-  '''
+  ```
 * Add product in cart.
-  '''sh
+  ```sh
   add to cart
-  '''
+  ```
 * Remove product from your cart.
-  '''sh
+  ```sh
   remove from cart
-  '''
+  ```
 * Place an order with all the items in cart.
-  '''sh
+  ```sh
   cart checkout
-  '''
+  ```
 * Shows all your orders placed.
-  '''sh
+  ```sh
   orders
-  '''
+  ```
 * Return product from your order.
-  '''sh
+  ```sh
   return product
-  '''
+  ```
 * Close the application.
-  '''sh
+  ```sh
   exit
-  '''
+  ```
