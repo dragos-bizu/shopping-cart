@@ -7,6 +7,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from auth.views import token
 from cart.helpers import CartHelper, is_stock
 from cart.serializers import CartSerializer, CartDetailSerializer
 from core.models import Cart, ProductSize, Order, OrderItems, UserProfile
@@ -20,18 +21,16 @@ quantity = openapi.Parameter('quantity', in_=openapi.IN_QUERY,
 user = openapi.Parameter('user_id', in_=openapi.IN_QUERY,
                          type=openapi.TYPE_INTEGER)
 
+cart_item_id = openapi.Parameter('cart_item_id', in_=openapi.IN_QUERY,
+                                 type=openapi.TYPE_INTEGER)
+
 
 class CartAPIView(APIView):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
 
-    def get(self, request):
-        cart = Cart.objects.filter(user=request.user.id)
-        serializer = CartSerializer(cart, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
     @swagger_auto_schema(operation_description='add item to cart',
-                         manual_parameters=[product, product_size, quantity,
+                         manual_parameters=[token, product, product_size, quantity,
                                             user],
                          responses={201: 'Item added to cart'})
     def post(self, request):
@@ -52,6 +51,9 @@ class CartAPIView(APIView):
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    @swagger_auto_schema(operation_description='remove item from cart',
+                         manual_parameters=[token, cart_item_id],
+                         responses={204: 'Item has been deleted'})
     def delete(self, request):
         cart = Cart.objects.get(id=request.data.get('cart_item_id'))
         if not cart:
@@ -62,10 +64,17 @@ class CartAPIView(APIView):
                         status=status.HTTP_200_OK)
 
 
+cart_total_price = openapi.Response('cart_total_price',
+                                    type=openapi.TYPE_NUMBER)
+
+
 class CartDetailListAPIView(APIView, LimitOffsetPagination):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
 
+    @swagger_auto_schema(operation_description='return user cart items',
+                         manual_parameters=[token],
+                         responses={200: CartDetailSerializer})
     def get(self, request):
         cart_products = Cart.objects.filter(user=request.user)
         cart_helper = CartHelper(request.user)
@@ -77,10 +86,13 @@ class CartDetailListAPIView(APIView, LimitOffsetPagination):
         return self.get_paginated_response(
             {'products': serializer.data, 'total_price': cart_total_price})
 
-
 class CartCheckoutAPIView(APIView):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
+
+    @swagger_auto_schema(operation_description='order user cart items',
+                         manual_parameters=[token],
+                         responses={201: 'Order successfully placed!'})
 
     def post(self, request, format=None):
         cart_items = Cart.objects.filter(user=request.user)

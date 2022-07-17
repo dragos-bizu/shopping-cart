@@ -1,4 +1,5 @@
 from django.contrib.auth.models import User
+from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
@@ -23,20 +24,17 @@ class CreateTokenView(ObtainAuthToken):
     renderer_classes = api_settings.DEFAULT_RENDERER_CLASSES
 
 
-AUTH_ME = '''{
-    "user": <user id>, 
-    "wallet": <user wallet>,
-    "name": <user name>,
-    "address": <user address>,
-}'''
+token = openapi.Parameter('Token', in_=openapi.IN_HEADER,
+                          type=openapi.TYPE_STRING)
+
 
 class UserProfileAPIView(APIView):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
 
     @swagger_auto_schema(operation_description='return user profile details',
-                         responses={200: AUTH_ME})
-
+                         manual_parameters=[token],
+                         responses={200: UserProfileSerializer})
     def get(self, request):
         user_profile = UserProfile.objects.get(user=request.user)
         serializer = UserProfileSerializer(user_profile)
