@@ -80,7 +80,7 @@ class CartApiTests(TestCase):
         create_sample_cart(self.user, my_product_2,
                            my_product_size_2, 2)
 
-        res = self.client.get(CART_CHECKOUT_URL)
+        res = self.client.post(CART_CHECKOUT_URL)
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
 
@@ -99,7 +99,7 @@ class CartApiTests(TestCase):
         create_sample_cart(self.user, my_product_2,
                            my_product_size_2, 2)
 
-        self.client.get(CART_CHECKOUT_URL)
+        self.client.post(CART_CHECKOUT_URL)
 
         my_user_profile = UserProfile.objects.get(user=self.user)
 
@@ -120,6 +120,6 @@ class CartApiTests(TestCase):
         create_sample_cart(self.user, my_product_2,
                            my_product_size_2, 2)
 
-        res = self.client.get(CART_CHECKOUT_URL)
+        res = self.client.post(CART_CHECKOUT_URL)
 
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
