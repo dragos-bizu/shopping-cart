@@ -36,7 +36,7 @@ class OrderApiTests(TestCase):
         create_sample_cart(self.user, my_product_2,
                            my_product_size_2, 2)
 
-        self.client.get(CART_CHECKOUT_URL)
+        self.client.post(CART_CHECKOUT_URL)
 
         exists = Order.objects.filter(user=self.user).exists()
 
@@ -57,7 +57,7 @@ class OrderApiTests(TestCase):
         create_sample_cart(self.user, my_product_2,
                            my_product_size_2, 2)
 
-        self.client.get(CART_CHECKOUT_URL)
+        self.client.post(CART_CHECKOUT_URL)
 
         order = Order.objects.get(user=self.user)
         order_items = OrderItems.objects.filter(order=order)
@@ -78,7 +78,7 @@ class OrderApiTests(TestCase):
                                                    my_product_size_1, 1)
 
         payload = {'order_item_id': my_order_item_1.id}
-        self.client.put(ORDER_RETURN_URL, payload)
+        self.client.post(ORDER_RETURN_URL, payload)
 
         my_order_item_1 = OrderItems.objects.get(order=order)
 
