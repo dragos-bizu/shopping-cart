@@ -183,7 +183,7 @@ class ShoppingCartApplication:
             ans = input('Are you sure you want to checkout? [y/n]: ')
         if ans == 'n':
             return
-        response = requests.get(f'{APIPath}/api/cart/checkout/',
+        response = requests.post(f'{APIPath}/api/cart/checkout/',
                                 headers=self.headers)
         if response.status_code != 200:
             if response:
@@ -225,7 +225,7 @@ class ShoppingCartApplication:
             ans = input('Are you sure you want to return this item? [y/n]: ')
         if ans == 'n':
             return
-        response = requests.put(f'{APIPath}/api/order/return/',
+        response = requests.post(f'{APIPath}/api/order/return/',
                                 headers=self.headers, data=data)
         if response.status_code != 200:
             if response:

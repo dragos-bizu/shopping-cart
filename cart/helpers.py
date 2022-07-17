@@ -1,6 +1,12 @@
 from core.models import Cart
 
 
+def is_stock(size, quantity):
+    if int(size) < int(quantity):
+        return False
+    return True
+
+
 class CartHelper:
     def __init__(self, user):
         self.user = user

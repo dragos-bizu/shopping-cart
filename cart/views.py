@@ -7,7 +7,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from cart.helpers import CartHelper
+from cart.helpers import CartHelper, is_stock
 from cart.serializers import CartSerializer, CartDetailSerializer
 from core.models import Cart, ProductSize, Order, OrderItems, UserProfile
 
@@ -42,7 +42,7 @@ class CartAPIView(APIView):
             'user': request.user.id,
         }
         size = ProductSize.objects.get(id=request.data.get('product_size'))
-        if int(size.available_items) < int(request.data.get('quantity')):
+        if not is_stock(size.available_items, request.data.get('quantity')):
             return Response({'Response': 'Not enough items in stock!'},
                             status=status.HTTP_400_BAD_REQUEST)
         serializer = CartSerializer(data=data)
@@ -82,7 +82,7 @@ class CartCheckoutAPIView(APIView):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
 
-    def get(self, request, format=None):
+    def post(self, request, format=None):
         cart_items = Cart.objects.filter(user=request.user)
         if not cart_items:
             return Response({'Response': 'Cart is empy'},
@@ -91,7 +91,7 @@ class CartCheckoutAPIView(APIView):
         for cart_item in cart_items:
             product_size = ProductSize.objects.get(
                 id=cart_item.product_size_id)
-            if int(product_size.available_items) < int(cart_item.quantity):
+            if not is_stock(product_size.available_items, cart_item.quantity):
                 return Response({'Response': 'Not enough items in stock'},
                                 status=status.HTTP_400_BAD_REQUEST)
         user_profile = UserProfile.objects.get(user=request.user)
