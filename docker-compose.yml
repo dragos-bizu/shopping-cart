@@ -19,6 +19,7 @@ services:
       - DB_NAME=app
       - DB_USER=postgres
       - DB_PASS=postgres
+      - products_quantity=10000
     depends_on:
       - db
 
