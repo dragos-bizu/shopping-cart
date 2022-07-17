@@ -23,7 +23,7 @@ class OrderReturnAPIView(APIView):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
 
-    def put(self, request):
+    def post(self, request):
         order_item = OrderItems.objects.get(
             id=request.data.get('order_item_id'))
 
