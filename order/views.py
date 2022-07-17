@@ -1,9 +1,12 @@
+from drf_yasg import openapi
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from auth.views import token
 from core.models import Order, OrderItems, ProductSize, UserProfile, \
     OrderItemStatus
 from order.serializers import OrderSerializer
@@ -13,16 +16,26 @@ class OrderAPIView(APIView):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
 
+    @swagger_auto_schema(operation_description='return user orders',
+                         manual_parameters=[token],
+                         responses={200: OrderSerializer})
     def get(self, request):
         order = Order.objects.filter(user=request.user)
         serializer = OrderSerializer(order, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
+order_item_id = openapi.Parameter('order_item_id', in_=openapi.IN_QUERY,
+                                  type=openapi.TYPE_INTEGER)
+
+
 class OrderReturnAPIView(APIView):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
 
+    @swagger_auto_schema(operation_description='return an item',
+                         manual_parameters=[token, order_item_id],
+                         responses={200: 'Item returned succesfully'})
     def post(self, request):
         order_item = OrderItems.objects.get(
             id=request.data.get('order_item_id'))
